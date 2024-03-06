@@ -13,12 +13,14 @@ import Admin from './pages/Admin'
 
 axios.defaults.withCredentials = true
 function App() {
+  const history = useNavigate()
+
   return (
     <div className="text-white bg-[#2a3952] min-h-screen">
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+        <Route path="/login" element={<Login history={history} />} />
+        <Route path="/register" element={<Register history={history} />} />
         <Route path="/gallery/*" element={<Gallery />} />
         <Route path="/about" element={<About />} />
         <Route path="/contacts" element={<Contacts />} />
