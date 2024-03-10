@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import NavItem from './Header/NavItem'
+import Logo from '../img/TechCraft logo.png'
 
 function Header() {
   const [menu, setMenu] = useState(false)
@@ -8,7 +9,7 @@ function Header() {
   return (
     <div className='relative flex items-center justify-between px-6 py-5 bg-[#0F1035]'>
       <Link to={'/'} className='flex items-center gap-4'>
-        <img src="logo" alt="logo" />
+        <img src={Logo} alt="logo" className='h-8'/>
         <div className='h-8 w-[1px] bg-white'></div>
         <span className="text-2xl">TechCraft Solutions</span>
       </Link>
@@ -25,9 +26,9 @@ function Header() {
         </div>
       </div>
       <button onClick={() => setMenu(!menu)} className='relative lg:hidden flex flex-col justify-between w-8 h-8 overflow-hidden'>
-        <div className={`h-[2px] bg-white ${menu ? 'absolute w-16 rotate-[45deg] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2' : 'w-8 mt-1'} transition-all`}></div>
-        <div className={`h-[2px] bg-white ${menu ? 'w-16 opacity-0' : 'w-8'} transition-all`}></div>
-        <div className={`h-[2px] bg-white ${menu ? 'absolute w-16 rotate-[135deg] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2' : 'w-8 mb-1'} transition-all`}></div>
+        <div className={`absolute w-16 left-1/2 -translate-x-1/2 h-[2px] bg-white ${menu ? 'rotate-[45deg] top-1/2 -translate-y-1/2' : 'top-1'} transition-all`}></div>
+        <div className={`absolute w-16 top-1/2 -translate-y-1/2 h-[2px] bg-white ${menu ? 'opacity-0' : ''} transition-all`}></div>
+        <div className={`absolute w-16 left-1/2 -translate-x-1/2 h-[2px] bg-white ${menu ? 'rotate-[-45deg] bottom-1/2 -translate-y-1/2 -mb-[2px]' : 'bottom-1'} transition-all`}></div>
       </button>
     </div>
   )
