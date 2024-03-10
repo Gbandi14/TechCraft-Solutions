@@ -1,8 +1,11 @@
 import React from 'react'
+import Header from '../components/Header'
 
 function Gallery() {
   return (
-    <div>Gallery</div>
+    <div>
+      <Header />
+    </div>
   )
 }
 

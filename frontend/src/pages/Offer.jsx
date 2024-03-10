@@ -1,8 +1,11 @@
 import React from 'react'
+import Header from '../components/Header'
 
 function Offer() {
   return (
-    <div>Offer</div>
+    <div>
+      <Header />
+    </div>
   )
 }
 
