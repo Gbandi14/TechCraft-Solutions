@@ -1,6 +1,7 @@
 import React, {useState} from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCheck } from '@fortawesome/free-solid-svg-icons'
+import { Link } from 'react-router-dom'
 
 function Login() {
   const [kLogged, setKLogged] = useState(false)
@@ -18,8 +19,8 @@ function Login() {
           </span>
           Maradj bejelentkezve
         </div>
-        <button className='px-5 py-2 rounded-lg bg-[#3887BE]/100 hover:bg-[#3887BE]/75 transition-colors mt-5'>Bejelentkezés</button>
-        <button className='px-5 py-2 rounded-lg transition-colors'>Regisztráció</button>
+        <button className='px-7 py-2 rounded-lg bg-[#3887BE]/100 hover:bg-[#3887BE]/75 transition-colors mt-5 self-center'>Bejelentkezés</button>
+        <Link to={'/register'} className='text-center mt-1.5'>Regisztráció</Link>
       </div>
     </div>
   )
