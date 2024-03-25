@@ -44,9 +44,9 @@ function Gallery() {
       {
         items.map((item) => (
         <div key={item.ID} className='flex flex-col lg:flex-row lg:items-center lg:space-x-6'>
-          <img src={item.Image} alt="itemImage" className='m-7 rounded-3xl aspect-video object-cover lg:w-1/2 lg:order-1'/>
-          <div className='m-7 lg:w-1/2 lg:order-2'>
-            <div className='mb-8 max-w-screen-md'>
+          <img src={item.Image} alt="itemImage" className='m-7 rounded-3xl aspect-video object-cover lg:w-1/2'/>
+          <div className='m-7'>
+            <div className='mb-8'>
               {htmlParse(item.Text)}
             </div>
             <div className='flex justify-center'>
