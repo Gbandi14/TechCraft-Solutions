@@ -1,39 +1,63 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Header from '../components/Header'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faChevronRight, faGear, faDesktop, faCode } from '@fortawesome/free-solid-svg-icons'
+import { faGear, faDesktop, faCode } from '@fortawesome/free-solid-svg-icons'
+import Category from '../components/Offer/Category'
 
 function Offer() {
   const [openedContent, setOpenedContent] = useState(0)
+  const [items, setItems] = useState([])
+  useEffect(() => {
+    setItems([
+      {
+        ID: 1,
+        Title: "Gépészeti tervezés és műszaki tanácsadás",
+        Icon: faGear,
+        Services: [
+          {
+            ID: 1,
+            Title: "asdf",
+            Description: "asdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdf"
+          },
+          {
+            ID: 4,
+            Title: "a",
+            Description: "asdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdf"
+          }
+        ]
+      },
+      {
+        ID: 2,
+        Title: "Webfejlesztés",
+        Icon: faDesktop,
+        Services: [
+          {
+            ID: 2,
+            Title: "asdx",
+            Description: "asdxasdx"
+          }
+        ]
+      },
+      {
+        ID: 3,
+        Title: "Szoftverfejlesztés",
+        Icon: faCode,
+        Services: [
+          {
+            ID: 3,
+            Title: "asdz",
+            Description: "asdzasdz"
+          }
+        ]
+      },
+    ])
+  },[])
   return (
     <div>
       <Header />
       <div>
-        <h3>Kérlek válassz az alábbi ágazataink közül!</h3>
-        <div className='rounded-lg overflow-hidden'>
-          <div className='flex justify-between bg-[#0F1035] items-center gap-4 p-4'>
-            <FontAwesomeIcon icon={faGear}/> 
-            <p className='w-full'>Gépészeti tervezés és műszaki tanácsadás</p>
-            <FontAwesomeIcon className={`${openedContent === 1 ? "rotate-90" : ""} transition-all`} icon={faChevronRight} onClick={() => setOpenedContent(openedContent === 0 ? 1 : 0)}/>   
-          </div>
-          {openedContent === 1 ?
-          <div className='flex p-4 bg-[#0F1035]/40 gap-8'>
-            <div className='w-3/5'>
-              <p>Válaszd ki milyen szolgáltatásra van szükséged!</p>
-              <select className='w-full rounded-md mt-1'></select>
-              <p>Megjegyzés</p>
-              <textarea className='w-full rounded-md resize-none mt-1'></textarea>
-            </div>
-            <div className='flex flex-col w-2/5'>
-              <p>
-                <b>Email:</b> <br />
-                <b>Vezetéknév:</b> <br />
-                <b>Keresztnév:</b>
-              </p>
-              <button className='bg-[#FF0000]/50 px-3 py-2 rounded-lg w-max'>Eddigi törlése</button>
-              <button className='bg-[#008000]/50 px-3 py-2 rounded-lg mt-2 w-max'>Rendelés leadása</button>
-            </div>
-          </div>: <></> }
+        <h3 className='font-semibold mx-10 my-8'>Kérlek válassz az alábbi ágazataink közül!</h3>
+        <div className='rounded-lg overflow-hidden flex flex-col gap-0.5 mx-10'>
+          {items.map((item, i) => <Category icon={item.Icon} title={item.Title} services={item.Services} contentIndex={i + 1} openedContent={openedContent} setOpenedContent={setOpenedContent} />)}        
         </div>
       </div>
     </div>
