@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Gép: 127.0.0.1
--- Létrehozás ideje: 2024. Már 25. 20:29
+-- Létrehozás ideje: 2024. Már 26. 18:18
 -- Kiszolgáló verziója: 10.4.32-MariaDB
 -- PHP verzió: 8.2.12
 
@@ -115,6 +115,20 @@ ALTER TABLE `categories`
   ADD PRIMARY KEY (`ID`);
 
 --
+-- A tábla indexei `offer`
+--
+ALTER TABLE `offer`
+  ADD KEY `UserID` (`UserID`),
+  ADD KEY `ServiceID` (`ServiceID`);
+
+--
+-- A tábla indexei `rating`
+--
+ALTER TABLE `rating`
+  ADD KEY `ReferenceID` (`ReferenceID`),
+  ADD KEY `UserID` (`UserID`);
+
+--
 -- A tábla indexei `references`
 --
 ALTER TABLE `references`
@@ -124,7 +138,8 @@ ALTER TABLE `references`
 -- A tábla indexei `services`
 --
 ALTER TABLE `services`
-  ADD PRIMARY KEY (`ID`);
+  ADD PRIMARY KEY (`ID`),
+  ADD KEY `CategoryID` (`CategoryID`);
 
 --
 -- A tábla indexei `users`
@@ -159,6 +174,30 @@ ALTER TABLE `services`
 --
 ALTER TABLE `users`
   MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- Megkötések a kiírt táblákhoz
+--
+
+--
+-- Megkötések a táblához `offer`
+--
+ALTER TABLE `offer`
+  ADD CONSTRAINT `offer_ibfk_1` FOREIGN KEY (`UserID`) REFERENCES `users` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `offer_ibfk_2` FOREIGN KEY (`ServiceID`) REFERENCES `services` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Megkötések a táblához `rating`
+--
+ALTER TABLE `rating`
+  ADD CONSTRAINT `rating_ibfk_1` FOREIGN KEY (`ReferenceID`) REFERENCES `references` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `rating_ibfk_2` FOREIGN KEY (`UserID`) REFERENCES `users` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Megkötések a táblához `services`
+--
+ALTER TABLE `services`
+  ADD CONSTRAINT `services_ibfk_1` FOREIGN KEY (`CategoryID`) REFERENCES `categories` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
