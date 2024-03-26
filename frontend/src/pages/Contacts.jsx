@@ -5,6 +5,23 @@ function Contacts() {
   return (
     <div>
       <Header />
+      <div>
+        <iframe
+          className='w-full h-72 outline-none'
+          loading="lazy"
+          allowfullscreen
+          referrerpolicy="no-referrer-when-downgrade"
+          src="https://www.google.com/maps/embed/v1/place?key=AIzaSyA4ySGX0OjFsWmcwIyaELMVqTol5DEPFns&q=Baja">
+        </iframe>
+        <div className='text-center mt-10'>
+          <h3 className='font-semibold text-2xl mb-3'>Elérhetőségeink</h3>
+          <p>Email: TechCraft-Solutions@gmail.com</p>
+          <p>Telefonszám: +36 30 117 215</p>
+          <p className='font-semibold text-lg mt-5 mb-1'>Nyitvatartás:</p>
+          <p>Hétfő-Péntek: 8:00-17:00 <br /> Szombat: 8:00-13:00</p>
+        </div>
+        
+      </div>
     </div>
   )
 }
