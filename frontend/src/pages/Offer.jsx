@@ -55,7 +55,7 @@ function Offer() {
     <div>
       <Header />
       <div>
-        <h3 className='font-semibold mx-10 my-8'>Kérlek válassz az alábbi ágazataink közül!</h3>
+        <h3 className='font-semibold mx-10 my-8 text-xl'>Kérlek válassz az alábbi ágazataink közül!</h3>
         <div className='rounded-lg overflow-hidden flex flex-col gap-0.5 mx-10'>
           {items.map((item, i) => <Category icon={item.Icon} title={item.Title} services={item.Services} contentIndex={i + 1} openedContent={openedContent} setOpenedContent={setOpenedContent} />)}        
         </div>

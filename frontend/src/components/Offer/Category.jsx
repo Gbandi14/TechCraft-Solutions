@@ -11,10 +11,10 @@ function Category(props) {
     }
   return (
     <div>
-      <div className='flex justify-between bg-[#0F1035] items-center gap-4 p-4'>
+      <div className='flex justify-between bg-[#0F1035] items-center gap-4 p-4 select-none' onClick={() => props.setOpenedContent(props.openedContent === props.contentIndex ? 0 : props.contentIndex)}>
         <FontAwesomeIcon icon={props.icon}/> 
         <p className='w-full'>{props.title}</p>
-        <FontAwesomeIcon className={`${props.openedContent === props.contentIndex ? "rotate-90" : ""} transition-all`} icon={faChevronRight} onClick={() => props.setOpenedContent(props.openedContent === props.contentIndex ? 0 : props.contentIndex)}/>   
+        <FontAwesomeIcon className={`${props.openedContent === props.contentIndex ? "rotate-90" : ""} transition-all`} icon={faChevronRight}/>   
       </div>
       {props.openedContent === props.contentIndex ?
       <div className='flex p-4 bg-[#0F1035]/40 gap-8'>
