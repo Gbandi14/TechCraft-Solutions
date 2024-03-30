@@ -2,42 +2,18 @@ import React, { useEffect, useState } from 'react'
 import Header from '../components/Header'
 import htmlParse from 'html-react-parser'
 import Modal from '../components/Gallery/Modal'
+import axios from 'axios'
 
 function Gallery() {
   const [items, setItems] = useState([]);
   const [edit, setEdit] = useState(null);
+
   useEffect(() => {
-    setItems([
-      {
-        ID: 1,
-        Image: "https://picsum.photos/id/237/1920/1080",
-        Text: `
-          <h2 className='text-center mb-3 text-3xl'>Keresztátadó</h2>
-          <p className='text-justify-center mb-20'>Ügyfelem komplett rendszerébe illeszthető berendezés tervezése volt a cél. A feladat a raklap kétirányű mozgatása, illetve orientáció változtatás nélküli átadása másik pályára.</p>
-          <h4 className='mb-3'>Feladatok:</h4>
-          <ul className='list-disc ml-5'>
-            <li>EUR raklap szállítása, amely maximális tömege 1 tonna</li>
-            <li>Keresztátadás az orientáció megtartásával</li>
-            <li>Kompakt kialakítás, amely más projektbe történő gyors implementálást tesz lehetővé</li>
-            <li>Logika és szernzorozás kiépítése</li>
-          </ul>`, 
-      },
-      {
-        ID: 2,
-        Image: "https://picsum.photos/id/238/1920/1080",
-        Text: `
-          <h2 className='text-center mb-3 text-3xl'>Keresztátadó</h2>
-          <p className='text-justify-center mb-20'>Ügyfelem komplett rendszerébe illeszthető berendezés tervezése volt a cél. A feladat a raklap kétirányű mozgatása, illetve orientáció változtatás nélküli átadása másik pályára.</p>
-          <h4 className='mb-3'>Feladatok:</h4>
-          <ul className='list-disc ml-5'>
-            <li>EUR raklap szállítása, amely maximális tömege 1 tonna</li>
-            <li>Keresztátadás az orientáció megtartásával</li>
-            <li>Kompakt kialakítás, amely más projektbe történő gyors implementálást tesz lehetővé</li>
-            <li>Logika és szernzorozás kiépítése</li>
-          </ul>` 
-      }
-    ]);
+    axios.get("http://localhost:8000/references").then((res) => {
+      setItems(res.data)
+    })   
   }, []);
+  
   return (
     <div>
       <Header />
