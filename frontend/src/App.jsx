@@ -9,6 +9,7 @@ import Gallery from './pages/Gallery'
 import About from './pages/About'
 import Contacts from './pages/Contacts'
 import Offer from './pages/Offer'
+import Profile from './pages/Profile'
 import Admin from './pages/Admin'
 
 axios.defaults.withCredentials = true
@@ -25,6 +26,7 @@ function App() {
         <Route path="/about" element={<About />} />
         <Route path="/contacts" element={<Contacts />} />
         <Route path="/offer" element={<Offer />} />
+        <Route path="/profile" element={<Profile />} />
         <Route path="/admin" element={<Admin />} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
