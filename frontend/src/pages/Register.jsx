@@ -1,5 +1,6 @@
 import React, {useState} from 'react'
 import { Link } from 'react-router-dom'
+import axios from 'axios'
 
 function Register() {
   const [username, setUsername] = useState("")
@@ -11,7 +12,13 @@ function Register() {
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
   function registerClick() {
-    alert(username + "," + companyname + "," + firstname + "," + lastname + "," + phone + "," + email + "," + password + "," + confirmPassword)
+    if (password !== confirmPassword) return alert("A két jelszó nem egyezik!")
+    axios.post("http://localhost:8000/register", { username, companyname, firstname, lastname, phone, email, password }).then((res) => {
+      alert("Sikeres regisztráció!")
+    })
+    .catch((err) => {
+      alert(err.response.data)
+    })
   }
   return (
     <div className='flex items-center justify-center h-screen'>

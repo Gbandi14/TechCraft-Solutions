@@ -2,13 +2,21 @@ import React, {useState} from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCheck } from '@fortawesome/free-solid-svg-icons'
 import { Link } from 'react-router-dom'
+import axios from 'axios'
 
-function Login() {
+function Login(props) {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [kLogged, setKLogged] = useState(false)
   function loginClick() {
-    alert(email + "," + password + "," + kLogged)
+    axios.post("http://localhost:8000/login", {email, password}).then((res) => {
+      sessionStorage.setItem("token", res.data.token)
+      alert("Sikeres bejelentkezés!")
+      props.history("/")
+    })
+    .catch((err) => {
+      alert(err.response.data)
+    })
   }
   return (
     <div className='flex items-center justify-center h-screen'>
