@@ -6,13 +6,17 @@ function Contacts() {
     <div>
       <Header />
       <div>
-        <iframe
-          className='w-full h-72 outline-none'
-          loading="lazy"
-          allowfullscreen
-          referrerpolicy="no-referrer-when-downgrade"
-          src="https://www.google.com/maps/embed/v1/place?key=AIzaSyA4ySGX0OjFsWmcwIyaELMVqTol5DEPFns&q=Baja">
-        </iframe>
+        <div className='relative flex items-center justify-center w-full h-72 bg-[#0F1035]/25'>
+          <div className='text-xl'>Betöltés...</div>
+          <iframe
+            className='absolute inset-0 w-full h-full outline-none'
+            loading="lazy"
+            allowfullscreen
+            referrerpolicy="no-referrer-when-downgrade"
+            src="https://www.google.com/maps/embed/v1/place?key=AIzaSyA4ySGX0OjFsWmcwIyaELMVqTol5DEPFns&q=Baja">
+          </iframe>
+        </div>
+        
         <div className='text-center mt-10'>
           <h3 className='font-semibold text-2xl mb-3'>Elérhetőségeink</h3>
           <p>Email: TechCraft-Solutions@gmail.com</p>
