@@ -57,7 +57,7 @@ function Offer() {
       <div>
         <h3 className='font-semibold mx-10 my-8 text-xl'>Kérlek válassz az alábbi ágazataink közül!</h3>
         <div className='rounded-lg overflow-hidden flex flex-col gap-0.5 mx-10'>
-          {items.map((item, i) => <Category icon={item.Icon} title={item.Title} services={item.Services} contentIndex={i + 1} openedContent={openedContent} setOpenedContent={setOpenedContent} />)}        
+          {items.map((item, i) => <Category key={i} icon={item.Icon} title={item.Title} services={item.Services} contentIndex={i + 1} openedContent={openedContent} setOpenedContent={setOpenedContent} />)}        
         </div>
       </div>
     </div>
