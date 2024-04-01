@@ -1,11 +1,20 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import NavItem from './Header/NavItem'
 import Logo from '../img/TechCraft logo.png'
+import axios from 'axios'
 
 function Header() {
   const [menu, setMenu] = useState(false)
-
+  const [user, setUser] = useState(null)
+  useEffect(() => {
+    if (sessionStorage.getItem("token")){
+      axios.get("http://localhost:8000/userdata", {headers:{Authorization:`Bearer ${sessionStorage.getItem("token")}`}}).then((res) => {
+        setUser(res.data)
+      })
+    }
+    
+  },[])
   return (
     <>
       <div className='fixed z-50 left-0 top-0 right-0 flex items-center justify-between px-6 py-5 bg-[#0F1035]'>
@@ -22,8 +31,20 @@ function Header() {
             <NavItem text='Elérhetőségeink' pathname='/contacts' />
           </div>
           <div className="flex lg:flex-row flex-col items-center lg:gap-2.5 gap-3 lg:mt-0 mt-6">
-            <Link to={'/login'} className='px-5 py-2 rounded-lg bg-[#365486]/50 hover:bg-[#365486]/75 transition-colors'>Bejelentkezés</Link>
-            <Link to={'/register'} className='px-5 py-2 rounded-lg bg-[#365486]/50 hover:bg-[#365486]/75 transition-colors'>Regisztráció</Link>
+            {user ? <Link to={"/profile"} className='flex'>
+              <div className='flex flex-col'>
+                <div>
+                  {user.Firstname} {user.Lastname}
+                </div>
+                <div>
+                  {["Megrendelő", "Admin"][user.Rank -1]}
+                </div>
+              </div>
+              <img src={user.ProfilePicture} alt="Profilkép" />
+            </Link> : <> 
+              <Link to={'/login'} className='px-5 py-2 rounded-lg bg-[#365486]/50 hover:bg-[#365486]/75 transition-colors'>Bejelentkezés</Link>
+              <Link to={'/register'} className='px-5 py-2 rounded-lg bg-[#365486]/50 hover:bg-[#365486]/75 transition-colors'>Regisztráció</Link>
+            </>}
           </div>
         </div>
         <button onClick={() => setMenu(!menu)} className='relative lg:hidden flex flex-col justify-between w-8 h-8 overflow-hidden'>
