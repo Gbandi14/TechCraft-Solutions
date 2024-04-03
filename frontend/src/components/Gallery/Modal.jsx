@@ -2,13 +2,19 @@ import React, { useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faStar } from '@fortawesome/free-solid-svg-icons'
 import { faStar as faEmptyStar } from '@fortawesome/free-regular-svg-icons'
+import axios from 'axios'
 
 function Modal(props) {
   const [hoverStar, setHoverStar] = useState(5)
   const [star, setStar] = useState(5)
   const [comment, setComment] = useState("")
   function rateClick() {
-      alert(comment + "," + star + "," + props.ID)
+    axios.post("http://localhost:8000/sendrate", { id: props.ID, comment, star }, {headers:{Authorization:`Bearer ${sessionStorage.getItem("token")}`}}).then((res) => {
+        alert("Értékelés elküldve!")
+        props.close()
+    }).catch((err) => {
+        alert(err.response.data)
+    })
   }
   return (
     <div className="fixed flex items-center justify-center inset-0 z-10 bg-black/30">
