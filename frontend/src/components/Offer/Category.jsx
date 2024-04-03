@@ -1,14 +1,32 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons'
+import axios from 'axios'
 
 function Category(props) {
-    const [service, setService] = useState(props.services[0].ID)
-    const [comment, setComment] = useState("")
-    function Clear() {
-        setService(props.services[0].ID)
-        setComment("")
-    }
+  const [service, setService] = useState(props.services[0].ID)
+  const [comment, setComment] = useState("")
+  const [description, setDescription] = useState("")
+
+  function SendOffer() {
+      axios.post("http://localhost:8000/sendoffer", {id: service, comment}, {headers:{Authorization:`Bearer ${sessionStorage.getItem("token")}`}}).then((res) => {
+          alert("Ajánlatkérés elküldve!")
+          Clear()
+      }).catch((err) => {
+          alert(err.response.data)
+      })
+  }
+
+  function Clear() {
+      setService(props.services[0].ID)
+      setComment("")
+  }
+
+  useEffect(() => {
+      const _service = props.services.find(x => x.ID === Number(service))
+      setDescription(_service?.Description)
+  }, [service, props.services])
+
   return (
     <div>
       <div className='flex justify-between bg-[#0F1035] items-center gap-4 p-4 select-none' onClick={() => props.setOpenedContent(props.openedContent === props.contentIndex ? 0 : props.contentIndex)}>
@@ -25,17 +43,18 @@ function Category(props) {
                 <option value={service.ID} key={service.ID}>{service.Title}</option>
             )}
           </select>
-          <p className='mt-2'>Megjegyzés</p>
+          <p className='mt-2'><b>Leírás:</b> {description}</p>
+          <p className='mt-4'>Megjegyzés</p>
           <textarea value={comment} onChange={(e) => setComment(e.target.value)} className='w-full rounded-md resize-none mt-1 text-black px-2 py-1 outline-none' rows={4}></textarea>
         </div>
         <div className='flex flex-col w-2/5'>
           <p>
-            <b>Email:</b> <br />
-            <b>Vezetéknév:</b> <br />
-            <b>Keresztnév:</b>
+            <b>Email:</b> {props.email}<br />
+            <b>Vezetéknév:</b> {props.firstname}<br />
+            <b>Keresztnév:</b> {props.lastname}
           </p>
           <button onClick={Clear} className='bg-[#FF0000]/50 px-3 py-2 rounded-lg w-max mt-8'>Eddigi törlése</button>
-          <button className='bg-[#008000]/50 px-3 py-2 rounded-lg mt-2 w-max'>Rendelés leadása</button>
+          <button onClick={SendOffer} className='bg-[#008000]/50 px-3 py-2 rounded-lg mt-2 w-max'>Rendelés leadása</button>
         </div>
       </div>: <></> }
     </div>
