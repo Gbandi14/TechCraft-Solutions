@@ -31,7 +31,7 @@ function Header() {
             <NavItem text='Elérhetőségeink' pathname='/contacts' />
           </div>
           <div className="flex lg:flex-row flex-col items-center lg:gap-2.5 gap-3 lg:mt-0 mt-6">
-            {user ? <Link to={"/profile"} className='flex'>
+            {user ? <Link to={"/profile"} className='group flex items-center gap-4'>
               <div className='flex flex-col'>
                 <div>
                   {user.Firstname} {user.Lastname}
@@ -40,7 +40,7 @@ function Header() {
                   {["Megrendelő", "Admin"][user.Rank -1]}
                 </div>
               </div>
-              <img src={user.ProfilePicture} alt="Profilkép" />
+              <img src={user.ProfilePicture} alt="Profilkép" className='h-11 rounded-md border-2 border-transparent group-hover:border-[#365486] transition-all' />
             </Link> : <> 
               <Link to={'/login'} className='px-5 py-2 rounded-lg bg-[#365486]/50 hover:bg-[#365486]/75 transition-colors'>Bejelentkezés</Link>
               <Link to={'/register'} className='px-5 py-2 rounded-lg bg-[#365486]/50 hover:bg-[#365486]/75 transition-colors'>Regisztráció</Link>
