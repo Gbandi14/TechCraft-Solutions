@@ -26,7 +26,7 @@ function App() {
         <Route path="/about" element={<About />} />
         <Route path="/contacts" element={<Contacts />} />
         <Route path="/offer" element={<Offer />} />
-        <Route path="/profile" element={<Profile />} />
+        <Route path="/profile" element={<Profile history={history} />} />
         <Route path="/admin" element={<Admin />} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
