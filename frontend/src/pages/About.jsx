@@ -1,11 +1,9 @@
 import React, {useRef} from 'react'
-import Header from '../components/Header'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faChevronDown } from '@fortawesome/free-solid-svg-icons'
 import Gear from '../img/Gear.svg'
 import Monitor from '../img/Monitor.svg'
 import Code from '../img/Code.svg'
-import { Link } from 'react-router-dom'
 
 function About() {
   const content_1 = useRef(null)
@@ -16,7 +14,6 @@ function About() {
   }
   return (
     <div>
-      <Header />
       <h1 className='text-center text-3xl mt-16 font-semibold'>Cégünkről</h1>
       <p className='text-center mt-12 max-w-screen-xl mx-auto px-5'>
         A TechCraft Solutions egy dinamikus és innovatív vállalkozás, amely széleskörű szolgáltatásokat nyújt szoftverfejlesztés, webfejlesztés, gépészeti tervezés és műszaki tanácsadás terén. 

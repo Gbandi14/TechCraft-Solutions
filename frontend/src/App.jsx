@@ -2,6 +2,7 @@ import { Routes, Route, Navigate, useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import './css/App.css'
 
+import Header from './components/Header'
 import Home from './pages/Home'
 import Login from './pages/Login'
 import Register from './pages/Register'
@@ -18,6 +19,8 @@ function App() {
 
   return (
     <div className="text-white bg-[#2a3952] min-h-screen">
+      {window.location.pathname !== "/login" && window.location.pathname !== "/register" ? <Header /> : <></>}
+
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login history={history} />} />
@@ -27,7 +30,7 @@ function App() {
         <Route path="/contacts" element={<Contacts />} />
         <Route path="/offer" element={<Offer />} />
         <Route path="/profile" element={<Profile history={history} />} />
-        <Route path="/admin" element={<Admin />} />
+        <Route path="/admin" element={<Admin history={history} />} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </div>

@@ -12,8 +12,7 @@ function Header() {
       axios.get("http://localhost:8000/userdata", {headers:{Authorization:`Bearer ${sessionStorage.getItem("token")}`}}).then((res) => {
         setUser(res.data)
       })
-    }
-    
+    }    
   },[])
   return (
     <>
@@ -29,6 +28,7 @@ function Header() {
             <NavItem text='Cégünkről' pathname='/about' />
             <NavItem text='Galéria' pathname='/gallery' />
             <NavItem text='Elérhetőségeink' pathname='/contacts' />
+            {user?.Rank === 2 ? <NavItem text='Admin' pathname='/admin' /> : <></>}
           </div>
           <div className="flex lg:flex-row flex-col items-center lg:gap-2.5 gap-3 lg:mt-0 mt-6">
             {user ? <Link to={"/profile"} className='group flex items-center gap-4'>
@@ -53,7 +53,7 @@ function Header() {
           <div className={`absolute w-16 left-1/2 -translate-x-1/2 h-[2px] bg-white ${menu ? 'rotate-[-45deg] bottom-1/2 -translate-y-1/2 -mb-[2px]' : 'bottom-1'} transition-all`}></div>
         </button>
       </div>
-      <div className='h-20'></div>
+      <div className='h-[5.2rem]'></div>
     </>
   )
 }

@@ -1,12 +1,10 @@
 import React from 'react'
-import Header from '../components/Header'
 import { Link } from 'react-router-dom'
 import Logo from '../img/TechCraft logo.png'
 
 function Home() {
   return (
     <div>
-      <Header />
       <div className='flex flex-col items-center'>
         <img src={Logo} alt="logo" className='h-40 mt-20'/>
         <p className='text-center text-4xl text-white mt-10'>Üdvözöljük a TechCraft Solutions oldalán!</p>

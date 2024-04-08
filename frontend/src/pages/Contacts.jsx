@@ -1,14 +1,13 @@
 import React from 'react'
-import Header from '../components/Header'
 
 function Contacts() {
   return (
     <div>
-      <Header />
       <div>
         <div className='relative flex items-center justify-center w-full h-72 bg-[#0F1035]/25'>
           <div className='text-xl'>Betöltés...</div>
           <iframe
+            title='Google Maps'
             className='absolute inset-0 w-full h-full outline-none'
             loading="lazy"
             allowfullscreen
