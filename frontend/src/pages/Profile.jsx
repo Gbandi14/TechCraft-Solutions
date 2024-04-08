@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import Header from '../components/Header'
 import ProfilePic from '../img/Profilepic.png'
 import axios from 'axios'
 
@@ -44,11 +43,10 @@ function Profile(props) {
 
     return (
         <div>
-            <Header/>
             <h1 className='text-2xl my-6 mx-16 font-semibold'>Profil</h1>   
-            <div className='flex flex-col md:flex-row text-lg'>
+            <div className='flex flex-col gap-10 lg:flex-row text-lg'>
                 <img src={ProfilePic} alt="profilepic" className='mx-14'/>
-                <div className='flex h-max w-full'>
+                <div className='flex h-max w-full justify-center lg:justify-normal'>
                     <div className='flex flex-col gap-2 justify-evenly pr-6'>
                         <label htmlFor="fullname">Tejlesnév:</label>
                         <label htmlFor="email">Email:</label>
@@ -62,7 +60,7 @@ function Profile(props) {
                         <input value={companyName} onChange={(e) => setCompanyName(e.target.value)} type="text" name='companyname' id='companyname'/>
                     </div>
                 </div>
-                <div className='flex h-max w-full'>
+                <div className='flex h-max w-full justify-center lg:justify-normal'>
                     <div className='flex flex-col gap-2 justify-evenly pr-6'>
                         <label htmlFor="username">Felhasználónév:</label>
                         {/* <label htmlFor="profilpic">Profilkép:</label> */}
