@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons'
 import axios from 'axios'
@@ -6,7 +6,10 @@ import axios from 'axios'
 function Category(props) {
   const [service, setService] = useState(props.services[0].ID)
   const [comment, setComment] = useState("")
-  const [description, setDescription] = useState("")
+  const description = useMemo(() => {
+    const _service = props.services.find(x => x.ID === Number(service))
+    return _service?.Description
+  }, [service, props.services])
 
   function SendOffer() {
       axios.post("http://localhost:8000/sendoffer", {id: service, comment}, {headers:{Authorization:`Bearer ${sessionStorage.getItem("token")}`}}).then((res) => {
@@ -21,11 +24,6 @@ function Category(props) {
       setService(props.services[0].ID)
       setComment("")
   }
-
-  useEffect(() => {
-      const _service = props.services.find(x => x.ID === Number(service))
-      setDescription(_service?.Description)
-  }, [service, props.services])
 
   return (
     <div>
