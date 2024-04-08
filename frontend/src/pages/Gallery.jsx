@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import Header from '../components/Header'
 import htmlParse from 'html-react-parser'
 import Modal from '../components/Gallery/Modal'
 import axios from 'axios'
@@ -16,13 +15,13 @@ function Gallery() {
   
   return (
     <div>
-      <Header />
       {
         items.map((item) => (
         <div key={item.ID} className='flex flex-col lg:flex-row lg:items-center lg:space-x-6'>
           <img src={item.Image} alt="itemImage" className='m-7 rounded-3xl aspect-video object-cover lg:w-1/2'/>
           <div className='m-7'>
             <div className='mb-8'>
+              <h2 className='text-center mb-3 text-3xl'>{item.Title}</h2>
               {htmlParse(item.Text)}
             </div>
             <div className='flex justify-center'>
