@@ -102,7 +102,21 @@ app.get("/references", async(req, res) => {
     })
 })
 
-app.get("/services", async(req, res) => {
+app.post("/reference", verifyToken, async(req, res) => {
+    const { image, title, text, id } = req.body
+
+    pool.query("SELECT * FROM users WHERE Email='"+req.email+"'", (error2, results2, fields2) => {
+        if (error2 || results2.length == 0) return res.status(500).send("Hiba!")
+        if (results2[0].Rank != 2) return res.status(401).send("Nincs jogod ehhez!")
+
+        pool.query("UPDATE `references` SET `Image`='"+image+"',`Title`='"+title+"',`Text`='"+text.replaceAll("'", '"')+"' WHERE ID='"+id+"'", (error, results, fields) => {
+            if (error) return res.status(500).send("Hiba!")
+            res.send("Sikeres referencia módosítás!")
+        })
+    })
+})
+
+app.get("/services", verifyToken, async(req, res) => {
     pool.query("SELECT categories.ID as categoryId, categories.Title as categoryTitle, services.ID as serviceId, services.Title as serviceTitle, services.Description as serviceDescription  FROM `categories` INNER JOIN `services` ON `services`.`CategoryID` = `categories`.`ID`", (error, results, fields) => {
         if (error) return res.status(500).send("Hiba történt!")
         res.send(results)
