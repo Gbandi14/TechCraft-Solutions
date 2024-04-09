@@ -102,7 +102,28 @@ app.get("/references", async(req, res) => {
     })
 })
 
+app.get("/reference-rating/:id", async(req, res) =>{
+    pool.query("SELECT AVG(Score) as Score FROM `rating` WHERE ReferenceID = 1", (error, results, fields) => {
+        if (error) return res.status(500).send("Hiba!")
+        res.send(results[0])
+    })
+})
+
 app.post("/reference", verifyToken, async(req, res) => {
+    const { image, title, text } = req.body
+
+    pool.query("SELECT * FROM users WHERE Email='"+req.email+"'", (error2, results2, fields2) => {
+        if (error2 || results2.length == 0) return res.status(500).send("Hiba!")
+        if (results2[0].Rank != 2) return res.status(401).send("Nincs jogod ehhez!")
+
+        pool.query("INSERT INTO `references`(`Image`, `Title`, `Text`) VALUES ('"+image+"','"+title+"','"+text+"')", (error, results, fields) => {
+            if (error) return res.status(500).send("Hiba!")
+            res.send("Sikeres referencia felvétel!")
+        })
+    })
+})
+
+app.patch("/reference", verifyToken, async(req, res) => {
     const { image, title, text, id } = req.body
 
     pool.query("SELECT * FROM users WHERE Email='"+req.email+"'", (error2, results2, fields2) => {
@@ -112,6 +133,18 @@ app.post("/reference", verifyToken, async(req, res) => {
         pool.query("UPDATE `references` SET `Image`='"+image+"',`Title`='"+title+"',`Text`='"+text.replaceAll("'", '"')+"' WHERE ID='"+id+"'", (error, results, fields) => {
             if (error) return res.status(500).send("Hiba!")
             res.send("Sikeres referencia módosítás!")
+        })
+    })
+})
+
+app.delete("/reference/:id", verifyToken, async(req, res) => {
+    pool.query("SELECT * FROM users WHERE Email='"+req.email+"'", (error2, results2, fields2) => {
+        if (error2 || results2.length == 0) return res.status(500).send("Hiba!")
+        if (results2[0].Rank != 2) return res.status(401).send("Nincs jogod ehhez!")
+
+        pool.query("DELETE FROM `references` WHERE ID=" + req.params.id, (error, results, fields) => {
+            if (error) return res.status(500).send("Hiba!")
+            res.send("Sikeres referencia törlés!")
         })
     })
 })
@@ -145,6 +178,64 @@ app.post("/sendoffer", verifyToken, async(req, res) => {
         pool.query("INSERT INTO `offer`(`UserID`, `ServiceID`, `Description`, `Type`) VALUES ('"+results[0].ID+"','"+id+"','"+comment+"',1)", (error2, results2, fields2) => {
             if (error2) return res.status(500).send("Hiba!")
             res.send("Ajánlatkérés elküldve!")
+        })
+    })
+})
+
+app.get("/user-search/:name", verifyToken, async(req, res) => {
+    pool.query("SELECT * FROM users WHERE Email='"+req.email+"'", (error2, results2, fields2) => {
+        if (error2 || results2.length == 0) return res.status(500).send("Hiba!")
+        if (results2[0].Rank != 2) return res.status(401).send("Nincs jogod ehhez!")
+
+        pool.query("SELECT * FROM users WHERE Firstname='"+req.params.name.split(" ")[0]+"' AND Lastname='"+req.params.name.split(" ")[1]+"'", (error, results, fields) => {
+            if (error) return res.status(500).send("Hiba!")
+            res.send(results[0])
+        })
+    })
+})
+
+app.patch("/user-data", verifyToken, async(req, res) => {
+    const {id, rank, email} = req.body
+
+    pool.query("SELECT * FROM users WHERE Email='"+req.email+"'", (error2, results2, fields2) => {
+        if (error2 || results2.length == 0) return res.status(500).send("Hiba!")
+        if (results2[0].Rank != 2) return res.status(401).send("Nincs jogod ehhez!")
+
+        pool.query("UPDATE `users` SET `Email`='"+email+"',`Rank`='"+rank+"' WHERE ID="+id, (error, results, fields) => {
+            if (error) return res.status(500).send("Hiba!")
+            res.send("Sikeres profil módosítás!")
+        })
+    })
+})
+
+app.delete("/user-data/:id", verifyToken, async(req, res) => {
+    pool.query("SELECT * FROM users WHERE Email='"+req.email+"'", (error2, results2, fields2) => {
+        if (error2 || results2.length == 0) return res.status(500).send("Hiba!")
+        if (results2[0].Rank != 2) return res.status(401).send("Nincs jogod ehhez!")
+
+        pool.query("DELETE FROM `users` WHERE ID=" + req.params.id, (error, results, fields) => {
+            if (error) return res.status(500).send("Hiba!")
+            res.send("Sikeres profil törlés!")
+        })
+    })
+})
+
+app.get('/categories', async(req, res) => {
+    pool.query("SELECT * FROM categories", (error, results, fields) => {
+        if (error) return res.status(500).send("Hiba!")
+        res.send(results)
+    })
+})
+
+app.patch("/categories", verifyToken, async(req, res) => {
+    const { id, title, text } = req.body
+    pool.query("SELECT * FROM users WHERE Email='"+req.email+"'", (error2, results2, fields2) => {
+        if (error2 || results2.length == 0) return res.status(500).send("Hiba!")
+        if (results2[0].Rank != 2) return res.status(401).send("Nincs jogod ehhez!")
+
+        pool.query("UPDATE `categories` SET `Title`='"+title+"',`Text`='"+text+"' WHERE ID='"+id+"'", (error, results, fields) => {
+            if (error) return res.status(500).send("Hiba!")
+            res.send("")
         })
     })
 })
