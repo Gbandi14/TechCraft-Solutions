@@ -2,13 +2,20 @@ import React, { useEffect, useState } from 'react'
 import htmlParse from 'html-react-parser'
 import Modal from '../components/Gallery/Modal'
 import axios from 'axios'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faStar } from '@fortawesome/free-solid-svg-icons'
 
 function Gallery() {
   const [items, setItems] = useState([]);
   const [edit, setEdit] = useState(null);
 
   useEffect(() => {
-    axios.get("http://localhost:8000/references").then((res) => {
+    axios.get("http://localhost:8000/references").then(async (res) => {
+      for (let i = 0; i < res.data.length; i++) {
+        const { data } = await axios.get("http://localhost:8000/reference-rating/" + res.data[i].ID)
+        res.data[i].Score = data.Score
+      }
+
       setItems(res.data)
     })   
   }, []);
@@ -18,7 +25,10 @@ function Gallery() {
       {
         items.map((item) => (
         <div key={item.ID} className='flex flex-col lg:flex-row lg:items-center lg:space-x-6'>
-          <img src={item.Image} alt="itemImage" className='m-7 rounded-3xl aspect-video object-cover lg:w-1/2'/>
+          <div className='m-7 rounded-3xl overflow-hidden aspect-video lg:w-1/2 relative'>
+            <img src={item.Image} alt="itemImage" className='object-cover w-full h-full'/>
+            <div className='flex items-center absolute bottom-0 right-0 px-10 py-5 text-4xl gap-3 bg-black/60 rounded-tl-3xl'>{item.Score} <FontAwesomeIcon icon={faStar} className='text-3xl text-[#FFD700]' /></div>
+          </div>
           <div className='m-7'>
             <div className='mb-8'>
               <h2 className='text-center mb-3 text-3xl'>{item.Title}</h2>
