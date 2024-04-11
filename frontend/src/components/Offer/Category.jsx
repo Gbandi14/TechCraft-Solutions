@@ -13,7 +13,7 @@ function Category(props) {
 
   function SendOffer() {
       axios.post("http://localhost:8000/sendoffer", {id: service, comment}, {headers:{Authorization:`Bearer ${sessionStorage.getItem("token")}`}}).then((res) => {
-          alert("Ajánlatkérés elküldve!")
+          alert(res.data)
           Clear()
       }).catch((err) => {
           alert(err.response.data)
@@ -51,8 +51,8 @@ function Category(props) {
             <b>Vezetéknév:</b> {props.firstname}<br />
             <b>Keresztnév:</b> {props.lastname}
           </p>
-          <button onClick={Clear} className='bg-[#FF0000]/50 px-3 py-2 rounded-lg w-max mt-8'>Eddigi törlése</button>
-          <button onClick={SendOffer} className='bg-[#008000]/50 px-3 py-2 rounded-lg mt-2 w-max'>Rendelés leadása</button>
+          <button onClick={Clear} className='bg-[#FF0000]/50 hover:bg-[#FF0000]/100 px-3 py-2 rounded-lg w-max mt-8 transition-colors'>Eddigi törlése</button>
+          <button onClick={SendOffer} className='bg-[#008000]/50 hover:bg-[#008000]/100 px-3 py-2 rounded-lg mt-2 w-max transition-colors'>Rendelés leadása</button>
         </div>
       </div>: <></> }
     </div>
