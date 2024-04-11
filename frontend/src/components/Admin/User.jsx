@@ -52,6 +52,7 @@ function User(props) {
         <div className='flex gap-3 *:rounded-md *:outline-none *:px-3 *:py-1 *:text-lg justify-center'>
           <button onClick={update} className='!bg-[#3887BE]/50 hover:!bg-[#3887BE]/100 transition-colors'>Adatok módosítása</button>
           <button onClick={remove} className='!bg-[#FF0000]/50 hover:!bg-[#FF0000]/75 transition-colors'>Fiók törlése</button>
+          <button onClick={() => window.location.reload()} className='!bg-[#FF0000]/50 hover:!bg-[#FF0000]/75 transition-colors'>Mégsem</button>
         </div>
       </div>
     </div>
