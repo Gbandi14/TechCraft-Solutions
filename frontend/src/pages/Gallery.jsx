@@ -27,10 +27,10 @@ function Gallery() {
         <div key={item.ID} className='flex flex-col lg:flex-row lg:items-center lg:space-x-6'>
           <div className='m-7 rounded-3xl overflow-hidden aspect-video lg:w-1/2 relative'>
             <img src={item.Image} alt="itemImage" className='object-cover w-full h-full'/>
-            <div className='flex items-center absolute bottom-0 right-0 px-10 py-5 text-4xl gap-3 bg-black/60 rounded-tl-3xl'>{item.Score} <FontAwesomeIcon icon={faStar} className='text-3xl text-[#FFD700]' /></div>
+            <div className='flex items-center absolute bottom-0 right-0 px-10 py-5 text-4xl gap-3 bg-black/60 rounded-tl-3xl'>{Number(item.Score).toFixed(1)} <FontAwesomeIcon icon={faStar} className='text-3xl text-[#FFD700]' /></div>
           </div>
-          <div className='m-7'>
-            <div className='mb-8'>
+          <div className='m-7 lg:w-1/2'>
+            <div className='mb-8 lg:w-1/2 custom-content'>
               <h2 className='text-center mb-3 text-3xl'>{item.Title}</h2>
               {htmlParse(item.Text)}
             </div>
