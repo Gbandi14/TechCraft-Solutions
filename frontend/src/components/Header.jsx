@@ -37,7 +37,7 @@ function Header() {
                   {user.Firstname} {user.Lastname}
                 </div>
                 <div>
-                  {["Megrendelő", "Admin"][user.Rank -1]}
+                  {["Megrendelő", "Admin", "Rendszergazda"][user.Rank -1]}
                 </div>
               </div>
               <img src={user.ProfilePicture} alt="Profilkép" className='h-11 rounded-md border-2 border-transparent group-hover:border-[#365486] transition-all' />
