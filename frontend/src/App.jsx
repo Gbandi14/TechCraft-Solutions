@@ -17,6 +17,10 @@ axios.defaults.withCredentials = true
 function App() {
   const history = useNavigate()
 
+  if (localStorage.getItem("token")) {
+    sessionStorage.setItem("token", localStorage.getItem("token"))
+  }
+
   return (
     <div className="text-white bg-[#2a3952] min-h-screen">
       {window.location.pathname !== "/login" && window.location.pathname !== "/register" ? <Header /> : <></>}

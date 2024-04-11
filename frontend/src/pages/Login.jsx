@@ -8,9 +8,12 @@ function Login(props) {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [kLogged, setKLogged] = useState(false)
+
   function loginClick() {
     axios.post("http://localhost:8000/login", {email, password}).then((res) => {
       sessionStorage.setItem("token", res.data.token)
+      if (kLogged) localStorage.setItem("token", res.data.token)
+
       alert("Sikeres bejelentkezés!")
       props.history("/")
     })
@@ -18,6 +21,7 @@ function Login(props) {
       alert(err.response.data)
     })
   }
+  
   return (
     <div className='flex items-center justify-center h-screen'>
       <div className='flex flex-col bg-[#0F1035] rounded-2xl p-12'>
