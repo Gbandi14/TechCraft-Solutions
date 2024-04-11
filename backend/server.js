@@ -4,7 +4,19 @@ const mysql = require("mysql")
 const cookieParser = require("cookie-parser")
 const bcrypt = require("bcrypt")
 const jwt = require("jsonwebtoken")
+const nodemailer = require("nodemailer")
+const rndstr = require("rndstr")
 require("dotenv").config()
+
+const transporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 587,
+    secure: false,
+    auth: {
+      user: process.env.EMAIL,
+      pass: process.env.PASSWORD,
+    },
+});
 
 
 const app = express()
@@ -46,9 +58,22 @@ app.post("/register", async(req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 8)
+    const verifyToken = rndstr({ length: 256 })
 
-    pool.query("INSERT INTO `users`(`Username`, `CompanyName`, `Firstname`, `Lastname`, `PhoneNumber`, `Email`, `Password`, `ProfilePicture`, `Rank`) VALUES ('"+username+"','"+companyname+"','"+firstname+"','"+lastname+"','"+phone+"','"+email+"','"+hashedPassword+"','https://i.postimg.cc/SK2TYrVV/Profilepic.png',1)", (error, results, fields) => {
+    pool.query("INSERT INTO `users`(`Username`, `CompanyName`, `Firstname`, `Lastname`, `PhoneNumber`, `Email`, `Password`, `ProfilePicture`, `Rank`, `VerifyToken`) VALUES ('"+username+"','"+companyname+"','"+firstname+"','"+lastname+"','"+phone+"','"+email+"','"+hashedPassword+"','https://i.postimg.cc/SK2TYrVV/Profilepic.png',1,'"+verifyToken+"')", async(error, results, fields) => {
         if (error) return res.status(500).send("Sikertelen regisztráció!")
+
+        await transporter.sendMail({
+            from: '"TechCraft Solutions" <' + process.env.EMAIL + '>',
+            to: email,
+            subject: "Sikeres regisztráció!",
+            html: `
+                <h2>Üdvözlünk az oldalon!</h2>
+                <p>Utolsó lépésként kérlek hitelesítsd az email címedet!</p>
+                <p>http://localhost:8000/verifytoken/${verifyToken}</p>
+            `,
+        });
+
         res.send("Sikeres regisztráció!")
     })
 })
@@ -89,9 +114,62 @@ app.post("/userupdate", verifyToken, async(req, res) => {
         return res.status(400).send("Hibás email formátum!")
     }
 
-    pool.query("UPDATE `users` SET `Username`='"+username+"',`CompanyName`='"+companyname+"',`Firstname`='"+firstname+"',`Lastname`='"+lastname+"',`PhoneNumber`='"+phone+"',`Email`='"+email+"' WHERE email = '"+req.email+"';", (error, results, fields) => {
+    pool.query("SELECT Email FROM users WHERE Email='"+req.email+"'", (e, r, f) =>{
+        if (e) return res.status(500).send("Hiba!")
+        let token = false
+        if (r[0].Email != email) {
+            token = rndstr({ length: 256 })
+        }
+
+        pool.query("UPDATE `users` SET `Username`='"+username+"',`CompanyName`='"+companyname+"',`Firstname`='"+firstname+"',`Lastname`='"+lastname+"',`PhoneNumber`='"+phone+"',`Email`='"+email+"'"+ (token ? ",VerifyToken='"+token+"'" : "") +" WHERE Email = '"+req.email+"';", async(error, results, fields) => {
+            if (error) return res.status(500).send("Hiba!")
+
+            if (token) {
+                await transporter.sendMail({
+                    from: '"TechCraft Solutions" <' + process.env.EMAIL + '>',
+                    to: email,
+                    subject: "Sikeres email módosítás!",
+                    html: `
+                        <h2>A ${username} felhasználó emailje módosítva lett erre a címre!</h2>
+                        <p>Kérlek hitelesítsd az email címedet!</p>
+                        <p>http://localhost:8000/verifytoken/${token}</p>
+                    `,
+                });
+            }
+
+            res.send("Sikeres profil módosítás!")
+        })
+    })
+})
+
+app.get("/verifytoken/:token", async(req, res) => {
+    const { token } = req.params
+
+    pool.query("SELECT * FROM users WHERE VerifyToken='"+token+"'", (error, results, fields) => {
         if (error) return res.status(500).send("Hiba!")
-        res.send("Sikeres profil módosítás!")
+        if (results.length === 0)
+        {
+            return res.status(400).send(`
+                <script src="https://cdn.tailwindcss.com"></script>
+                <div class='text-white flex-col w-screen h-screen bg-[#2a3952] flex items-center justify-center'>
+                    <p>Hibás token!</p>
+                    <br>
+                    <a href='http://localhost:3000' class='px-3 py-1.5 text-sm rounded-lg bg-[#0F1035]/100 hover:bg-[#0F1035]/75 transition-colors mt-3'>Főoldal megnyitása</a>
+                </div>
+            `)
+        }
+
+        pool.query("UPDATE users SET `VerifyToken`='' WHERE VerifyToken='"+token+"'", (error2, results2, fields2) => {
+            if (error2) return res.status(500).send("Hiba!")
+            res.send(`
+                <script src="https://cdn.tailwindcss.com"></script>
+                <div class='text-white flex-col w-screen h-screen bg-[#2a3952] flex items-center justify-center'>
+                    <p>Sikeres email hitelesítés!</p>
+                    <br>
+                    <a href='http://localhost:3000' class='px-3 py-1.5 text-sm rounded-lg bg-[#0F1035]/100 hover:bg-[#0F1035]/75 transition-colors mt-3'>Főoldal megnyitása</a>
+                </div>
+            `)
+        })
     })
 })
 
@@ -103,7 +181,7 @@ app.get("/references", async(req, res) => {
 })
 
 app.get("/reference-rating/:id", async(req, res) =>{
-    pool.query("SELECT AVG(Score) as Score FROM `rating` WHERE ReferenceID = 1", (error, results, fields) => {
+    pool.query("SELECT AVG(Score) as Score FROM `rating` WHERE ReferenceID = " + req.params.id, (error, results, fields) => {
         if (error) return res.status(500).send("Hiba!")
         res.send(results[0])
     })
@@ -114,7 +192,7 @@ app.post("/reference", verifyToken, async(req, res) => {
 
     pool.query("SELECT * FROM users WHERE Email='"+req.email+"'", (error2, results2, fields2) => {
         if (error2 || results2.length == 0) return res.status(500).send("Hiba!")
-        if (results2[0].Rank != 2) return res.status(401).send("Nincs jogod ehhez!")
+        if (results2[0].Rank < 2) return res.status(401).send("Nincs jogod ehhez!")
 
         pool.query("INSERT INTO `references`(`Image`, `Title`, `Text`) VALUES ('"+image+"','"+title+"','"+text+"')", (error, results, fields) => {
             if (error) return res.status(500).send("Hiba!")
@@ -128,7 +206,7 @@ app.patch("/reference", verifyToken, async(req, res) => {
 
     pool.query("SELECT * FROM users WHERE Email='"+req.email+"'", (error2, results2, fields2) => {
         if (error2 || results2.length == 0) return res.status(500).send("Hiba!")
-        if (results2[0].Rank != 2) return res.status(401).send("Nincs jogod ehhez!")
+        if (results2[0].Rank < 2) return res.status(401).send("Nincs jogod ehhez!")
 
         pool.query("UPDATE `references` SET `Image`='"+image+"',`Title`='"+title+"',`Text`='"+text.replaceAll("'", '"')+"' WHERE ID='"+id+"'", (error, results, fields) => {
             if (error) return res.status(500).send("Hiba!")
@@ -140,7 +218,7 @@ app.patch("/reference", verifyToken, async(req, res) => {
 app.delete("/reference/:id", verifyToken, async(req, res) => {
     pool.query("SELECT * FROM users WHERE Email='"+req.email+"'", (error2, results2, fields2) => {
         if (error2 || results2.length == 0) return res.status(500).send("Hiba!")
-        if (results2[0].Rank != 2) return res.status(401).send("Nincs jogod ehhez!")
+        if (results2[0].Rank < 2) return res.status(401).send("Nincs jogod ehhez!")
 
         pool.query("DELETE FROM `references` WHERE ID=" + req.params.id, (error, results, fields) => {
             if (error) return res.status(500).send("Hiba!")
@@ -153,6 +231,50 @@ app.get("/services", verifyToken, async(req, res) => {
     pool.query("SELECT categories.ID as categoryId, categories.Title as categoryTitle, services.ID as serviceId, services.Title as serviceTitle, services.Description as serviceDescription  FROM `categories` INNER JOIN `services` ON `services`.`CategoryID` = `categories`.`ID`", (error, results, fields) => {
         if (error) return res.status(500).send("Hiba történt!")
         res.send(results)
+    })
+})
+
+app.post("/services", verifyToken, async(req, res) => {
+    const { title, description, categoryId } = req.body
+
+    pool.query("SELECT * FROM users WHERE Email='"+req.email+"'", (error2, results2, fields2) => {
+        if (error2 || results2.length == 0) return res.status(500).send("Hiba!")
+        if (results2[0].Rank < 2) return res.status(401).send("Nincs jogod ehhez!")
+
+        pool.query("INSERT INTO `services`(`Title`, `Description`, `CategoryID`) VALUES ('"+title+"','"+description+"','"+categoryId+"')", (error, results, fields) => {
+            console.log(error)
+            console.log(title, description, categoryId)
+            if (error) return res.status(500).send("Hiba történt!")
+            res.send("Sikeres kategória felvétel!")
+        })
+    
+    })
+})
+
+app.patch("/services", verifyToken, async(req, res) => {
+    const { id, title, description, categoryId } = req.body
+
+    pool.query("SELECT * FROM users WHERE Email='"+req.email+"'", (error2, results2, fields2) => {
+        if (error2 || results2.length == 0) return res.status(500).send("Hiba!")
+        if (results2[0].Rank < 2) return res.status(401).send("Nincs jogod ehhez!")
+
+        pool.query("UPDATE `services` SET `Title`='"+title+"',`Description`='"+description+"',`CategoryID`='"+categoryId+"' WHERE ID=" + id, (error, results, fields) => {
+            if (error) return res.status(500).send("Hiba történt!")
+            res.send("Sikeres kategória módosítás!")
+        })
+
+    })
+})
+
+app.delete("/services/:id", verifyToken, async(req, res) => {
+    pool.query("SELECT * FROM users WHERE Email='"+req.email+"'", (error2, results2, fields2) => {
+        if (error2 || results2.length == 0) return res.status(500).send("Hiba!")
+        if (results2[0].Rank < 2) return res.status(401).send("Nincs jogod ehhez!")
+
+        pool.query("DELETE FROM `services` WHERE ID='"+req.params.id+"'", (error, results, fields) => {
+            if (error) return res.status(500).send("Hiba történt!")
+            res.send("Sikeres kategória törlés!")
+        })
     })
 })
 
@@ -169,15 +291,38 @@ app.post("/sendrate", verifyToken, async(req, res) => {
     })
 })
 
+app.get("/offers", verifyToken, async(req, res) => {
+    pool.query("SELECT * FROM users WHERE Email='"+req.email+"'", (error2, results2, fields2) => {
+        if (error2 || results2.length == 0) return res.status(500).send("Hiba!")
+        if (results2[0].Rank < 2) return res.status(401).send("Nincs jogod ehhez!")
+
+        pool.query("SELECT offer.UserID as `UserID`, offer.ServiceID as `ServiceID`, offer.Type as `Type`, offer.Description as `Description`, users.Username as `Username`, users.Firstname as `Firstname`, users.Lastname as `Lastname`, users.Email as `Email`, users.ProfilePicture as `ProfilePicture`, services.Title as `ServiceTitle`, categories.Title as `CategoryTitle` FROM `offer` INNER JOIN users ON users.ID = offer.UserID INNER JOIN services ON services.ID = offer.ServiceID INNER JOIN categories ON categories.ID = services.CategoryID", (error, results, fields) => {
+            if (error) return res.status(500).send("Hiba!")
+            res.send(results)
+        })
+    })
+})
+
 app.post("/sendoffer", verifyToken, async(req, res) => {
     const { id, comment } = req.body
 
     pool.query("SELECT ID FROM users WHERE Email = '"+req.email+"'", (error, results, fields) => {
         if (error || results.length == 0) return res.status(500).send("Hiba!")
 
-        pool.query("INSERT INTO `offer`(`UserID`, `ServiceID`, `Description`, `Type`) VALUES ('"+results[0].ID+"','"+id+"','"+comment+"',1)", (error2, results2, fields2) => {
+        pool.query("INSERT INTO `offer`(`UserID`, `ServiceID`, `Description`, `Type`) VALUES ('"+results[0].ID+"','"+id+"','"+comment+"',1)", async (error2, results2, fields2) => {
             if (error2) return res.status(500).send("Hiba!")
-            res.send("Ajánlatkérés elküldve!")
+
+            await transporter.sendMail({
+                from: '"TechCraft Solutions" <' + process.env.EMAIL + '>',
+                to: req.email,
+                subject: "Sikeres rendelés",
+                html: `
+                    <h2>Sikeres rendelés</h2>
+                    <p>Köszönjük, hogy minket választ! Hamarosan értesítjük emailben a további információkkal kapcsolatban!</p>
+                `,
+            });
+
+            res.send("Ajánlatkérés elküldve! További információkat a megadott Email címén találja.")
         })
     })
 })
@@ -185,9 +330,10 @@ app.post("/sendoffer", verifyToken, async(req, res) => {
 app.get("/user-search/:name", verifyToken, async(req, res) => {
     pool.query("SELECT * FROM users WHERE Email='"+req.email+"'", (error2, results2, fields2) => {
         if (error2 || results2.length == 0) return res.status(500).send("Hiba!")
-        if (results2[0].Rank != 2) return res.status(401).send("Nincs jogod ehhez!")
+        if (results2[0].Rank < 2) return res.status(401).send("Nincs jogod ehhez!")
 
         pool.query("SELECT * FROM users WHERE Firstname='"+req.params.name.split(" ")[0]+"' AND Lastname='"+req.params.name.split(" ")[1]+"'", (error, results, fields) => {
+            if (req.email == results[0].Email) return res.status(400).send("A saját adataidat nem módosíthatod!")
             if (error) return res.status(500).send("Hiba!")
             res.send(results[0])
         })
@@ -199,11 +345,16 @@ app.patch("/user-data", verifyToken, async(req, res) => {
 
     pool.query("SELECT * FROM users WHERE Email='"+req.email+"'", (error2, results2, fields2) => {
         if (error2 || results2.length == 0) return res.status(500).send("Hiba!")
-        if (results2[0].Rank != 2) return res.status(401).send("Nincs jogod ehhez!")
+        if (results2[0].Rank < 2) return res.status(401).send("Nincs jogod ehhez!")
 
-        pool.query("UPDATE `users` SET `Email`='"+email+"',`Rank`='"+rank+"' WHERE ID="+id, (error, results, fields) => {
-            if (error) return res.status(500).send("Hiba!")
-            res.send("Sikeres profil módosítás!")
+        pool.query("SELECT * FROM users WHERE ID='"+id+"'", (error3, results3, fields3) => {
+            if (error3) return res.status(500).send("Hiba!")
+            if (rank != results3[0].Rank && results2[0].Rank != 3) return res.status(401).send("Felhasználó rang módosítás csak Rendszergazdai jogosultsággal elérhető!")
+
+            pool.query("UPDATE `users` SET `Email`='"+email+"',`Rank`='"+rank+"' WHERE ID="+id, (error, results, fields) => {
+                if (error) return res.status(500).send("Hiba!")
+                res.send("Sikeres profil módosítás!")
+            })
         })
     })
 })
@@ -211,7 +362,7 @@ app.patch("/user-data", verifyToken, async(req, res) => {
 app.delete("/user-data/:id", verifyToken, async(req, res) => {
     pool.query("SELECT * FROM users WHERE Email='"+req.email+"'", (error2, results2, fields2) => {
         if (error2 || results2.length == 0) return res.status(500).send("Hiba!")
-        if (results2[0].Rank != 2) return res.status(401).send("Nincs jogod ehhez!")
+        if (results2[0].Rank < 2) return res.status(401).send("Nincs jogod ehhez!")
 
         pool.query("DELETE FROM `users` WHERE ID=" + req.params.id, (error, results, fields) => {
             if (error) return res.status(500).send("Hiba!")
@@ -231,11 +382,36 @@ app.patch("/categories", verifyToken, async(req, res) => {
     const { id, title, text } = req.body
     pool.query("SELECT * FROM users WHERE Email='"+req.email+"'", (error2, results2, fields2) => {
         if (error2 || results2.length == 0) return res.status(500).send("Hiba!")
-        if (results2[0].Rank != 2) return res.status(401).send("Nincs jogod ehhez!")
+        if (results2[0].Rank < 2) return res.status(401).send("Nincs jogod ehhez!")
 
         pool.query("UPDATE `categories` SET `Title`='"+title+"',`Text`='"+text+"' WHERE ID='"+id+"'", (error, results, fields) => {
             if (error) return res.status(500).send("Hiba!")
             res.send("")
+        })
+    })
+})
+
+app.post("/offer-end", verifyToken, async(req, res) => {
+    const { userId, serviceId, email, description } = req.body
+
+    pool.query("SELECT * FROM users WHERE Email='"+req.email+"'", async(error2, results2, fields2) => {
+        if (error2 || results2.length == 0) return res.status(500).send("Hiba!")
+        if (results2[0].Rank < 2) return res.status(401).send("Nincs jogod ehhez!")
+
+        await transporter.sendMail({
+            from: '"TechCraft Solutions" <' + process.env.EMAIL + '>',
+            to: email,
+            subject: "Rendelését lezártuk",
+            html: `
+                <h2>Rendelését lezártuk</h2>
+                <p>Köszönjük, hogy minket választott!</p>
+                <p>Megjegyzés: ${description}</p>
+            `,
+        });
+
+        pool.query("UPDATE `offer` SET `Type`=2 WHERE UserID='"+userId+"' AND ServiceID='"+serviceId+"'", (error, results, fields) => {
+            console.log(email, description)
+            res.send('Email elküldve a felhasználó email címére!')
         })
     })
 })
@@ -246,3 +422,8 @@ app.listen(port, (error) => {
     }
     console.log("A szerver elindult!")
 })
+
+
+
+
+
