@@ -23,6 +23,7 @@ function Profile(props) {
 
     function logout() {
         sessionStorage.removeItem("token")
+        localStorage.removeItem("token")
         window.location.reload()
     }
 
