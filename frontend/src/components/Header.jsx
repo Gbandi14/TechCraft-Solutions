@@ -40,7 +40,7 @@ function Header() {
                   {["Megrendelő", "Admin", "Rendszergazda"][user.Rank -1]}
                 </div>
               </div>
-              <img src={user.ProfilePicture} alt="Profilkép" className='h-11 rounded-md border-2 border-transparent group-hover:border-[#365486] transition-all' />
+              <img src={user.ProfilePicture.startsWith("http") ? user.ProfilePicture : 'http://localhost:8000/get-file/' + user.ProfilePicture.split("/")[2]} alt="Profilkép" className='h-11 rounded-md border-2 border-transparent group-hover:border-[#365486] transition-all' />
             </Link> : <> 
               <Link to={'/login'} className='px-5 py-2 rounded-lg bg-[#365486]/50 hover:bg-[#365486]/75 transition-colors'>Bejelentkezés</Link>
               <Link to={'/register'} className='px-5 py-2 rounded-lg bg-[#365486]/50 hover:bg-[#365486]/75 transition-colors'>Regisztráció</Link>

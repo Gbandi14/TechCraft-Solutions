@@ -8,12 +8,22 @@ function Profile(props) {
     const [phoneNumber, setPhoneNumber] = useState('')
     const [companyName, setCompanyName] = useState('')
     const [username, setUsername] = useState('')
-    // const [profilePicture, setProfilePicture] = useState('')
+    const [profilePicture, setProfilePicture] = useState('')
+    const [pp, setPp] = useState('')
 
     function updateProfile() {
         if (!window.confirm("A rendszer ki fog jelentkeztetni, biztos folytatod?")) return
 
-        axios.post("http://localhost:8000/userupdate", {username, companyname: companyName, firstname: fullname.split(" ")[0], lastname: fullname.split(" ")[1], phone: phoneNumber, email}, {headers:{Authorization:`Bearer ${sessionStorage.getItem("token")}`}}).then((res) => {
+        const formData = new FormData()
+        formData.append('new-avatar', profilePicture)
+        formData.append('username', username)
+        formData.append('companyname', companyName)
+        formData.append('firstname', fullname.split(" ")[0])
+        formData.append('lastname', fullname.split(" ")[1])
+        formData.append('phone', phoneNumber)
+        formData.append('email', email)
+
+        axios.post("http://localhost:8000/userupdate", formData, {headers:{Authorization:`Bearer ${sessionStorage.getItem("token")}`}}).then((res) => {
             alert('Sikeres profil módosítás!')
             logout()
         }).catch((err) => {
@@ -35,7 +45,7 @@ function Profile(props) {
                 setPhoneNumber(res.data.PhoneNumber)
                 setCompanyName(res.data.CompanyName)
                 setUsername(res.data.Username)
-                // setProfilePicture(res.data.ProfilePicture)
+                setPp(res.data.ProfilePicture)
             })
         } else {
             props.history("/")
@@ -46,7 +56,7 @@ function Profile(props) {
         <div>
             <h1 className='text-2xl my-6 mx-16 font-semibold'>Profil</h1>   
             <div className='flex flex-col gap-10 lg:flex-row text-lg'>
-                <img src={ProfilePic} alt="profilepic" className='mx-14'/>
+                <img src={pp ? (pp.startsWith("http") ? pp : 'http://localhost:8000/get-file/' + pp.split("/")[2]) : ProfilePic} alt="profilepic" className='mx-14 rounded-lg w-80'/>
                 <div className='flex h-max w-full justify-center lg:justify-normal'>
                     <div className='flex flex-col gap-2 justify-evenly pr-6'>
                         <label htmlFor="fullname">Tejlesnév:</label>
@@ -64,13 +74,13 @@ function Profile(props) {
                 <div className='flex h-max w-full justify-center lg:justify-normal'>
                     <div className='flex flex-col gap-2 justify-evenly pr-6'>
                         <label htmlFor="username">Felhasználónév:</label>
-                        {/* <label htmlFor="profilpic">Profilkép:</label> */}
+                        <label htmlFor="profilpic">Profilkép:</label>
                         <label>&#8203;</label>
                         <label>&#8203;</label>
                     </div>
                     <div className='flex flex-col gap-2 justify-evenly *:bg-[#0F1035]/50 *:rounded-md *:outline-none *:px-2.5 *:py-0.5'>
                         <input value={username} onChange={(e) => setUsername(e.target.value)} type="text" name='username' id='username'/>
-                        {/* <input value={profilePicture} onChange={(e) => setProfilePicture(e.target.value)} type="file" name='profilepic' id='profilepic'/> */}
+                        <input onChange={(e) => setProfilePicture(e.target.files[0])} accept="image/png, image/gif, image/jpeg" type="file" name='profilepic' id='profilepic'/>
                         <button onClick={updateProfile} className='!bg-[#3887BE]/50 hover:!bg-[#3887BE]/100 transition-colors'>Adatok módosítása</button>
                         <button onClick={logout} className='!bg-[#FF0000]/50 hover:!bg-[#FF0000]/75 transition-colors'>Kijelentkezés</button>
                     </div>

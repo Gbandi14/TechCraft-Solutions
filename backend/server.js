@@ -6,7 +6,15 @@ const bcrypt = require("bcrypt")
 const jwt = require("jsonwebtoken")
 const nodemailer = require("nodemailer")
 const rndstr = require("rndstr")
+const multer = require("multer")
+const path = require("path")
 require("dotenv").config()
+
+const avatarStorage = multer.diskStorage({ destination: 'avatars/', filename: function(req, file, cb) {
+    cb(null, `${rndstr({ length: 32 })}-${Date.now()}${path.extname(file.originalname)}`);
+}});
+
+const uploadAvatar = multer({ storage: avatarStorage });
 
 const transporter = nodemailer.createTransport({
     host: "smtp.gmail.com",
@@ -105,8 +113,10 @@ app.get("/userdata", verifyToken, async(req, res) => {
     })
 })
 
-app.post("/userupdate", verifyToken, async(req, res) => {
+app.post("/userupdate", verifyToken, uploadAvatar.single("new-avatar"), async(req, res) => {
     const { username, companyname, firstname, lastname, phone, email } = req.body
+    const file = req.file;
+
     if (!firstname && !lastname && !email) {
         return res.status(400).send("Hibás adatok!")
     }
@@ -121,7 +131,8 @@ app.post("/userupdate", verifyToken, async(req, res) => {
             token = rndstr({ length: 256 })
         }
 
-        pool.query("UPDATE `users` SET `Username`='"+username+"',`CompanyName`='"+companyname+"',`Firstname`='"+firstname+"',`Lastname`='"+lastname+"',`PhoneNumber`='"+phone+"',`Email`='"+email+"'"+ (token ? ",VerifyToken='"+token+"'" : "") +" WHERE Email = '"+req.email+"';", async(error, results, fields) => {
+        pool.query("UPDATE `users` SET `Username`='"+username+"',`CompanyName`='"+companyname+"',`Firstname`='"+firstname+"',`Lastname`='"+lastname+"',`PhoneNumber`='"+phone+"',`Email`='"+email+"'"+ (token ? ",`VerifyToken`='"+token+"'" : "") + (file ? ",`ProfilePicture`='/avatars/" + file.filename + "'" : '')+" WHERE Email = '"+req.email+"';", async(error, results, fields) => {
+            console.log(error)
             if (error) return res.status(500).send("Hiba!")
 
             if (token) {
@@ -414,6 +425,10 @@ app.post("/offer-end", verifyToken, async(req, res) => {
             res.send('Email elküldve a felhasználó email címére!')
         })
     })
+})
+
+app.get("/get-file/:fileName", async(req, res) => {
+    res.sendFile(`${path.resolve()}/avatars/${req.params.fileName}`);
 })
 
 app.listen(port, (error) => {
