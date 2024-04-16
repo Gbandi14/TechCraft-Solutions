@@ -56,7 +56,7 @@ async function verifyToken(req, res, next) {
     }
 }
 
-app.post("/register", async(req, res) => {
+app.post("/register", (req, res) => {
     const { username, companyname, firstname, lastname, phone, email, password } = req.body
     if (!firstname && !lastname && !email && !password) {
         return res.status(400).send("Hibás adatok!")
@@ -65,24 +65,28 @@ app.post("/register", async(req, res) => {
         return res.status(400).send("Hibás email formátum!")
     }
 
-    const hashedPassword = await bcrypt.hash(password, 8)
-    const verifyToken = rndstr({ length: 256 })
+    pool.query("SELECT * FROM users WHERE Email='" + email + "'", async (error2, results2, fields2) => {
+        if (results2.length > 0) return res.status(400).send("Az email cím foglalt!")
 
-    pool.query("INSERT INTO `users`(`Username`, `CompanyName`, `Firstname`, `Lastname`, `PhoneNumber`, `Email`, `Password`, `ProfilePicture`, `Rank`, `VerifyToken`) VALUES ('"+username+"','"+companyname+"','"+firstname+"','"+lastname+"','"+phone+"','"+email+"','"+hashedPassword+"','https://i.postimg.cc/SK2TYrVV/Profilepic.png',1,'"+verifyToken+"')", async(error, results, fields) => {
-        if (error) return res.status(500).send("Sikertelen regisztráció!")
+        const hashedPassword = await bcrypt.hash(password, 8)
+        const verifyToken = rndstr({ length: 256 })
 
-        await transporter.sendMail({
-            from: '"TechCraft Solutions" <' + process.env.EMAIL + '>',
-            to: email,
-            subject: "Sikeres regisztráció!",
-            html: `
-                <h2>Üdvözlünk az oldalon!</h2>
-                <p>Utolsó lépésként kérlek hitelesítsd az email címedet!</p>
-                <p>http://localhost:8000/verifytoken/${verifyToken}</p>
-            `,
-        });
+        pool.query("INSERT INTO `users`(`Username`, `CompanyName`, `Firstname`, `Lastname`, `PhoneNumber`, `Email`, `Password`, `ProfilePicture`, `Rank`, `VerifyToken`) VALUES ('"+username+"','"+companyname+"','"+firstname+"','"+lastname+"','"+phone+"','"+email+"','"+hashedPassword+"','https://i.postimg.cc/SK2TYrVV/Profilepic.png',1,'"+verifyToken+"')", async(error, results, fields) => {
+            if (error) return res.status(500).send("Sikertelen regisztráció!")
 
-        res.send("Sikeres regisztráció!")
+            await transporter.sendMail({
+                from: '"TechCraft Solutions" <' + process.env.EMAIL + '>',
+                to: email,
+                subject: "Sikeres regisztráció!",
+                html: `
+                    <h2>Üdvözlünk az oldalon!</h2>
+                    <p>Utolsó lépésként kérlek hitelesítsd az email címedet!</p>
+                    <a href="http://localhost:8000/verifytoken/${verifyToken}">Email cím megerősítése</a>
+                `,
+            });
+
+            res.send("Sikeres regisztráció!")
+        })
     })
 })
 
