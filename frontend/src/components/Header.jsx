@@ -28,7 +28,7 @@ function Header() {
             <NavItem text='Cégünkről' pathname='/about' />
             <NavItem text='Galéria' pathname='/gallery' />
             <NavItem text='Elérhetőségeink' pathname='/contacts' />
-            {user?.Rank === 2 ? <NavItem text='Admin' pathname='/admin' /> : <></>}
+            {user?.Rank >= 2 ? <NavItem text='Admin' pathname='/admin' /> : <></>}
           </div>
           <div className="flex lg:flex-row flex-col items-center lg:gap-2.5 gap-3 lg:mt-0 mt-6">
             {user ? <Link to={"/profile"} className='group flex items-center gap-4'>
