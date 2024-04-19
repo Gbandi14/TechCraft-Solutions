@@ -1,5 +1,7 @@
 import React, {useState} from 'react'
 import { Link } from 'react-router-dom'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faChevronLeft } from '@fortawesome/free-solid-svg-icons'
 import axios from 'axios'
 
 function Register() {
@@ -22,7 +24,10 @@ function Register() {
   }
   return (
     <div className='flex items-center justify-center h-screen'>
-      <div className='flex flex-col bg-[#0F1035] rounded-2xl p-12'>
+      <div className='flex flex-col bg-[#0F1035] rounded-2xl p-12 relative'>
+        <Link to={'/'} className='flex items-center justify-center absolute bg-[#0F1035] rounded-2xl right-full top-0 h-14 aspect-square mr-2 select-none ' draggable={false}>
+          <FontAwesomeIcon icon={faChevronLeft} />
+        </Link>
         <h1 className='text-2xl text-center'>Regisztráció</h1>
         <div className='flex gap-10'>
           <div className='flex flex-col w-1/2'>

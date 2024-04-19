@@ -1,6 +1,6 @@
 import React, {useState} from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCheck } from '@fortawesome/free-solid-svg-icons'
+import { faCheck, faChevronLeft } from '@fortawesome/free-solid-svg-icons'
 import { Link } from 'react-router-dom'
 import axios from 'axios'
 
@@ -24,7 +24,10 @@ function Login(props) {
   
   return (
     <div className='flex items-center justify-center h-screen'>
-      <div className='flex flex-col bg-[#0F1035] rounded-2xl p-12'>
+      <div className='flex flex-col bg-[#0F1035] rounded-2xl p-12 relative'>
+        <Link to={'/'} className='flex items-center justify-center absolute bg-[#0F1035] rounded-2xl right-full top-0 h-14 aspect-square mr-2 select-none ' draggable={false}>
+          <FontAwesomeIcon icon={faChevronLeft} />
+        </Link>
         <h1 className='text-2xl text-center'>Bejelentkezés</h1>
         <label htmlFor="email" className='text-sm mt-6 ml-1'>Email</label>
         <input type='email' value={email} onChange={(e) => setEmail(e.target.value)} name='email' id='email' className='px-4 py-2 rounded-lg bg-white outline-none text-black' placeholder='Email'/>
