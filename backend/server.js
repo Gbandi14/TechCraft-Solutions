@@ -136,7 +136,6 @@ app.post("/userupdate", verifyToken, uploadAvatar.single("new-avatar"), async(re
         }
 
         pool.query("UPDATE `users` SET `Username`='"+username+"',`CompanyName`='"+companyname+"',`Firstname`='"+firstname+"',`Lastname`='"+lastname+"',`PhoneNumber`='"+phone+"',`Email`='"+email+"'"+ (token ? ",`VerifyToken`='"+token+"'" : "") + (file ? ",`ProfilePicture`='/avatars/" + file.filename + "'" : '')+" WHERE Email = '"+req.email+"';", async(error, results, fields) => {
-            console.log(error)
             if (error) return res.status(500).send("Hiba!")
 
             if (token) {
@@ -257,8 +256,6 @@ app.post("/services", verifyToken, async(req, res) => {
         if (results2[0].Rank < 2) return res.status(401).send("Nincs jogod ehhez!")
 
         pool.query("INSERT INTO `services`(`Title`, `Description`, `CategoryID`) VALUES ('"+title+"','"+description+"','"+categoryId+"')", (error, results, fields) => {
-            console.log(error)
-            console.log(title, description, categoryId)
             if (error) return res.status(500).send("Hiba történt!")
             res.send("Sikeres kategória felvétel!")
         })
@@ -347,7 +344,8 @@ app.get("/user-search/:name", verifyToken, async(req, res) => {
         if (error2 || results2.length == 0) return res.status(500).send("Hiba!")
         if (results2[0].Rank < 2) return res.status(401).send("Nincs jogod ehhez!")
 
-        pool.query("SELECT * FROM users WHERE Firstname='"+req.params.name.split(" ")[0]+"' AND Lastname='"+req.params.name.split(" ")[1]+"'", (error, results, fields) => {
+        pool.query("SELECT * FROM users WHERE Firstname='"+req.params.name.split(" ")[0]+"' AND Lastname='"+req.params.name.split(" ")[1]+"' OR Firstname='"+req.params.name.split(" ")[1]+"' AND Lastname='"+req.params.name.split(" ")[0]+"'", (error, results, fields) => {
+            if (results.length == 0) return res.send(undefined)
             if (req.email == results[0].Email) return res.status(400).send("A saját adataidat nem módosíthatod!")
             if (error) return res.status(500).send("Hiba!")
             res.send(results[0])
@@ -425,7 +423,6 @@ app.post("/offer-end", verifyToken, async(req, res) => {
         });
 
         pool.query("UPDATE `offer` SET `Type`=2 WHERE UserID='"+userId+"' AND ServiceID='"+serviceId+"'", (error, results, fields) => {
-            console.log(email, description)
             res.send('Email elküldve a felhasználó email címére!')
         })
     })

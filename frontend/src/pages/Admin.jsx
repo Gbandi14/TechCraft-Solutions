@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSearch } from '@fortawesome/free-solid-svg-icons'
 import axios from 'axios'
@@ -17,11 +17,18 @@ function Admin(props) {
     if (!name && !name.includes(" ")) return setUser('none')
 
     axios.get("http://localhost:8000/user-search/" + name, {headers:{Authorization:`Bearer ${sessionStorage.getItem("token")}`}}).then((res) => {
+      setSelected(0)
       setUser(res.data || 'none')
     }).catch((err) => {
       alert(err.response.data)
     })
   }
+
+  useEffect(() => {
+    axios.get("http://localhost:8000/offers", {headers:{Authorization:`Bearer ${sessionStorage.getItem("token")}`}}).then((res) =>{}).catch((err) => {
+      props.history("/")
+    })
+  }, [props])
 
   return (
     <div className='mt-2'>
@@ -39,7 +46,7 @@ function Admin(props) {
           <div className='flex flex-col gap-2 mt-4 items-center h-max'>
             <div className='relative flex mt-1'>
               <button onClick={userSearch} className='h-full aspect-square flex items-center justify-center absolute right-0'><FontAwesomeIcon icon={ faSearch } className='text-black'/></button>
-              <input value={name} onChange={(e) => {setName(e.target.value)}} type="text" name="title" id="title" className='rounded-lg text-black px-2 py-1 outline-none' />
+              <input value={name} onChange={(e) => {setName(e.target.value)}} onKeyDown={(e) => (e.key === "Enter" ? userSearch() : null)} type="text" name="username" id="username" className='rounded-lg text-black pl-2 py-1 pr-8 outline-none' />
             </div>   
             {user && user !== 'none' ? <button className={`${selected === 4 ? 'bg-[#3887BE]/100' : 'bg-[#3887BE]/50'} hover:bg-[#3887BE]/100 rounded-md px-3 py-1`} onClick={() => { setSelected(selected === 4 ? 0 : 4) }}>{user.Firstname} {user.Lastname}</button> : <></>}
             {user === 'none' ? <p>Nincs ilyen felhasználó!</p> : ''}
