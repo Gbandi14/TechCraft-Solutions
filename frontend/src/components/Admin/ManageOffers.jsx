@@ -35,8 +35,8 @@ function ManageOffers() {
         {offers.filter(offer => showAll ? true : offer.Type === 1).map((item, i) => 
           <div key={i}>
             <div className='flex justify-between bg-[#0F1035] items-center gap-4 p-4 select-none' onClick={() => setOpenedContent(openedContent === i ? null : i)}>
-              <img src={item.ProfilePicture} alt="Profilkép" className='h-8' />
-              <p className='w-full'>{item.Firstname} {item.Lastname} {item.ServiceID}</p>
+              <img src={item.ProfilePicture.startsWith("http") ? item.ProfilePicture : 'http://localhost:8000/get-file/' + item.ProfilePicture.split("/")[2]} alt="Profilkép" className='h-8' />
+              <p className='w-full'>{item.Firstname} {item.Lastname} <span className='opacity-60'>({item.ServiceTitle})</span></p>
               <div className='flex gap-5 items-center'>
                 <div className={`${item.Type === 1 ? 'bg-green-700' : 'bg-red-700'} px-3 py-1 rounded-md`}>
                   {item.Type === 1 ? 'Folyamatban' : 'Lezárt'}
