@@ -45,9 +45,9 @@ async function verifyToken(req, res, next) {
     try {
         const header = req.headers["authorization"]
         const token = header && header.split(" ")[1]
-        if (!token) return res.status(403).send("Nincs jogod a tartalom lekérdezéséhez!")
+        if (!token) return res.status(403).send("Ehhez nincs jogosultságod!")
         jwt.verify(token, process.env.ACCESS_SECRET, (err, decoded) => {
-            if (err) return res.status(403).send("Nincs jogod a tartalom lekérdezéséhez!")
+            if (err) return res.status(403).send("Ehhez nincs jogosultságod!")
             req.email = decoded.email
             next()
         })
