@@ -59,7 +59,7 @@ function Profile(props) {
                 <img src={pp ? (pp.startsWith("http") ? pp : 'http://localhost:8000/get-file/' + pp.split("/")[2]) : ProfilePic} alt="profilepic" className='mx-14 rounded-lg w-80'/>
                 <div className='flex h-max w-full justify-center lg:justify-normal'>
                     <div className='flex flex-col gap-2 justify-evenly pr-6'>
-                        <label htmlFor="fullname">Tejlesnév:</label>
+                        <label htmlFor="fullname">Tejles név:</label>
                         <label htmlFor="email">Email:</label>
                         <label htmlFor="phone">Telefonszám:</label>
                         <label htmlFor="companyname">Cégnév:</label>
