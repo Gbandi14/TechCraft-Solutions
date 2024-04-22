@@ -29,11 +29,16 @@ function Gallery(props) {
     if (sessionStorage.getItem("token")) {
       axios.get("http://localhost:8000/references").then((res) => {
         setReferences(res.data)
-        setReference(res.data[0].ID)
-        setId(res.data[0].ID)
-        setTitle(res.data[0].Title)
-        setImage(res.data[0].Image)
-        setText(res.data[0].Text)
+        if (res.data.length > 0){
+          setReference(res.data[0].ID)
+          setId(res.data[0].ID)
+          setTitle(res.data[0].Title)
+          setImage(res.data[0].Image)
+          setText(res.data[0].Text)
+        } else {
+          setReference(0)
+        }
+
       })   
     } else {
       props.history('/')
