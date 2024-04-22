@@ -11,7 +11,7 @@ function Modal(props) {
   function rateClick() {
     axios.post("http://localhost:8000/sendrate", { id: props.ID, comment, star }, {headers:{Authorization:`Bearer ${sessionStorage.getItem("token")}`}}).then((res) => {
         alert("Értékelés elküldve!")
-        props.close()
+        window.location.reload()
     }).catch((err) => {
         alert(err.response.data)
     })
