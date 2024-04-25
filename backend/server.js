@@ -105,7 +105,7 @@ app.post("/login", async(req, res) => {
         const accessToken = jwt.sign({ email:results[0].Email }, process.env.ACCESS_SECRET, { expiresIn:"7d" })
         
 
-        res.send({ msg:"Sikeres regisztráció!", token:accessToken })
+        res.send({ msg:"Sikeres bejelentkezés!", token:accessToken })
     })
 
 })
