@@ -9,7 +9,7 @@ function Offer() {
   const [firstname, setFirstname] = useState('')
   const [lastname, setLastname] = useState('')
   const [openedContent, setOpenedContent] = useState(0)
-  const [items, setItems] = useState([])
+  const [items, setItems] = useState(null)
   useEffect(() => {
     if (sessionStorage.getItem("token")){
       axios.get("http://localhost:8000/userdata", {headers:{Authorization:`Bearer ${sessionStorage.getItem("token")}`}}).then((res) => {
@@ -42,7 +42,7 @@ function Offer() {
 
   return (
     <div>
-      { items.length > 0 ? 
+      { items !== null ? 
         <div>
           <h3 className='font-semibold mx-10 my-8 text-xl'>Kérlek válassz az alábbi ágazataink közül!</h3>
           <div className='rounded-lg overflow-hidden flex flex-col gap-0.5 mx-10'>
