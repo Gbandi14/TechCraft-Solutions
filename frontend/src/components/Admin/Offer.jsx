@@ -14,10 +14,12 @@ function Offer() {
   useEffect(() => {
     axios.get("http://localhost:8000/services", {headers:{Authorization:`Bearer ${sessionStorage.getItem("token")}`}}).then((res) => {
       setServices(res.data)
-      setId(res.data[0].serviceId)
-      setTitle(res.data[0].serviceTitle)
-      setCategory(res.data[0].categoryId)
-      setDescription(res.data[0].serviceDescription)
+      if (res.data.length >0) {
+        setId(res.data[0].serviceId)
+        setTitle(res.data[0].serviceTitle)
+        setCategory(res.data[0].categoryId)
+        setDescription(res.data[0].serviceDescription)
+      }
     })
 
     axios.get("http://localhost:8000/categories").then((res) => {
