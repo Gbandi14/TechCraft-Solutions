@@ -11,7 +11,7 @@ function Header() {
     if (sessionStorage.getItem("token")){
       axios.get("http://localhost:8000/userdata", {headers:{Authorization:`Bearer ${sessionStorage.getItem("token")}`}}).then((res) => {
         setUser(res.data)
-      })
+      }).catch(err => {})
     }    
   },[])
   return (
