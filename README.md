@@ -33,7 +33,7 @@ Az üres adatbázishoz tartozó rendszergazdai felhasználó adatai:
 
 ### techcraft_solutions_datas.sql - adatbázis adatokkal
 
-Az adatokkal feltöltött adatbázishoz tartozó rendszergazdai felhasználó adatai:
+Az adatokkal feltöltött adatbázishoz tartozó felhasználói adatok:
 
 Rendszergazda:
 
