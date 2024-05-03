@@ -72,6 +72,7 @@ function Gallery(props) {
     } else {
       axios.patch("http://localhost:8000/reference", { image, title, text, id }, {headers:{Authorization:`Bearer ${sessionStorage.getItem("token")}`}}).then((res) => {
         alert(res.data)
+        window.location.reload()
       }).catch((err) => {
         alert(err.response.data)
       })

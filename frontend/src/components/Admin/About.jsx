@@ -28,6 +28,7 @@ function About() {
   function update() {
     axios.patch("http://localhost:8000/categories", {id, title, text}, {headers:{Authorization:`Bearer ${sessionStorage.getItem("token")}`}}).then((res) => {
       alert('Sikeres módosítás!')
+      window.location.reload()
     }).catch((err) => {
       alert('Hiba történt! Kérjük küldje el az oldal tulajdonosainak a Konzolban található hibaüzenetet, hogy mielőbb kijavíthassák a hibát! Megértését és türelmét köszönjük!')
       console.log(err)

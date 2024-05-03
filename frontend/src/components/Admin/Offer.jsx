@@ -12,18 +12,20 @@ function Offer() {
   const [categories, setCategories] = useState([])
 
   useEffect(() => {
-    axios.get("http://localhost:8000/services", {headers:{Authorization:`Bearer ${sessionStorage.getItem("token")}`}}).then((res) => {
-      setServices(res.data)
-      if (res.data.length >0) {
-        setId(res.data[0].serviceId)
-        setTitle(res.data[0].serviceTitle)
-        setCategory(res.data[0].categoryId)
-        setDescription(res.data[0].serviceDescription)
-      }
-    })
-
     axios.get("http://localhost:8000/categories").then((res) => {
       setCategories(res.data)
+
+      axios.get("http://localhost:8000/services", {headers:{Authorization:`Bearer ${sessionStorage.getItem("token")}`}}).then((res) => {
+        setServices(res.data)
+        if (res.data.length >0) {
+          setId(res.data[0].serviceId)
+          setTitle(res.data[0].serviceTitle)
+          setCategory(res.data[0].categoryId)
+          setDescription(res.data[0].serviceDescription)
+        } else {
+          setId(0)
+        }
+      })
     })
   }, [])
 
